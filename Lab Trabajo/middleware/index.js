@@ -88,7 +88,7 @@ function mail(data) {
     });
     var infoMessage = {
         from: 'prueba.uptcdis@gmail.com',
-        to: 'jose.chaves@uptc.edu.co',
+        to: 'lorena.rios@uptc.edu.co',
         subject: 'Falla en el sistema',
         text: data
     };
