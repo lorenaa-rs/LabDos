@@ -5,6 +5,10 @@ const port = process.argv[2];
 const bodyparser = require('body-parser')
 const multer = require('multer')
 const cors = require('cors');
+var path = require('path')
+var fs = require('fs')
+var morgan = require('morgan')//guardar logs por peticiones
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'})
 var sizeOf = require('image-size');
 var Frases=new Array()
 Frases[0] = "No hay que ir para atrás ni para darse impulso (Lao Tsé)";
@@ -30,6 +34,8 @@ app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(cors())
 app.use(express.static('public'));
+app.use(morgan('combined', {stream: accessLogStream})) //logs
+app.use(require('express-status-monitor')());  //monitoreo
 
 app.get('/', (req, res) => {
     console.log("Connection");
@@ -73,7 +79,7 @@ function editImg(filePath, text) {
             return Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
         })
         .then(function (font) {
-            loadedImage.print(font, (wi / 3), (he - 30), text)
+            loadedImage.print(font, (wi / 5), (he - 30), text)
                 .write(filePath);
         })
         .catch(function (err) {

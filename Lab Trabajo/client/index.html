@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
     <style>
         .loader {
@@ -39,30 +40,86 @@
 </head>
 
 <body>
-    <form id='sendForm' method="POST" action="/loadImg" enctype="multipart/form-data">
-        Ingresa el archivo:
-        <br />
-        <input id='fileCh' name='files' type='file' />
-        <input type="submit" value="Cargar Archivo" />
-        <br />
-    </form>
+
+    <table style="border: hidden" width="1300" cellspacing="1" cellpadding="3">
+        <tbody style="border: hidden">
+            <tr style="border: hidden">
+                <table width="1300" cellspacing="1" cellpadding="3" border="10" bgcolor="#1E679A"
+                    style="border: hidden;">
+                    <tr>
+                        <td>
+                            <font color="#FFFFFF" face="arial, verdana, helvetica">
+                                <b>
+                                    <center>Seleccionar la imagen
+                                </b>
+                            </font>
+                        </td>
+                    </tr>
+                    <tr style="border: hidden">
+                        <td bgcolor="#ffffcc">
+                            <font face="arial, verdana, helvetica">
+                                <b>Ingresa el archivo:</b>
+                                <center>
+                                    <form id='sendForm' method="POST" action="/loadImg" enctype="multipart/form-data">
+                                        <br>
+
+                                        <input id='fileCh' name='files' type='file' />
+                                        <button id='cargarArchivo' disabled="disabled" type="submit"
+                                        value="Cargar Archivo" >Cargar archivo</button> 
+
+                                    </form>
+                            </font>
+                        </td>
+                    </tr>
+                </table>
+            </tr>
+            <br><br><br><br><br><br><br><br><br><br>
+            <div id="imgRes">
+            </div>
+            <tr style="border: hidden">
+                <table width="1300" cellspacing="1" cellpadding="3" border="10" bgcolor="#1E679A"
+                    style="border: hidden;">
+                    <tr>
+                        <td>
+                            <font color="#FFFFFF" face="arial, verdana, helvetica">
+                                <form id='sendForm' method="POST" action="/loadImg" enctype="multipart/form-data">
+                                    <b>
+                                        <center>Seleccionar servidor
+                                    </b>
+                            </font>
+                        </td>
+                    </tr>
+                    <tr style="border: hidden">
+                        <td bgcolor="#ffffcc">
+                            <div id="server">
+                                <font face="arial, verdana, helvetica">
+                                    <center>
+                                        <label>Ip Servidor: <input type="text" id="ip" /></label>
+                                        <label>Puerto: <input type="text" id="port" /></label>
+                                        <br><br>
+                                        <button onclick="addServer()">Agregar Nuevo Servidor</button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </tr>
+        </tbody>
+    </table>
+
+
     <br />
-    <div id="server">
-        <label>Ip Servidor: <input type="text" id="ip" /></label>
-        <label>Puerto: <input type="text" id="port" /></label>
-        <button onclick="addServer()">Agregar Nuevo Servidor</button>
-    </div>
-    <br />
-    <br />
-    <div id="imgRes">
-    </div>
 </body>
 
 <script>
-    var middleware = "http://localhost:3000/"
+    
+
+    var middleware = "http://localhost:3005/"
     var ipServer = "";
     var result = null;
     var data = null;
+    $("#fileCh").change(function(){
+    $("button").prop("disabled", this.files.length == 0);
+});
     document.getElementById('sendForm').onsubmit = async (e) => {
         e.preventDefault();
         var responseA = await fetch(middleware, {
@@ -90,17 +147,22 @@
         }
     }
 
+  
     function loadedElement() {
         setTimeout(function () { document.getElementById("imgRes").innerHTML = '<button onclick="loadImage()">Mostrar</>'; }, 5000)
     }
-
+   
     function loadImage() {
+    
         $.post(ipServer + 'getImage', data)
             .done(function (res) {
                 $('#imgRes').html(res);
             })
+          
         document.getElementById('fileCh').value = null;
     }
+
+
 
     function addServer() {
         var serverInfo = {

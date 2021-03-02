@@ -1,20 +1,26 @@
 const express = require('express')
 const app = express()
 //const port = process.argv[2];
-const port = 3000;
+const port = 3005;
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const bodyparser = require('body-parser')
 const loadbalance = require('loadbalance')
 var path = require('path')
 var fs = require('fs')
-var morgan = require('morgan')
+var morgan = require('morgan')//guardar logs por peticiones
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'})
 const axios = require('axios');
-var servers = ["http://localhost:3001/",
-    "http://localhost:3002/",
-    "http://localhost:3003/"]
+/**var servers = ["http://192.168.0.18:3001/",
+    "http://192.168.0.20:3002/",
+    "http://192.168.0.21:3003/"]
+   */
+  var servers = ["http://localhost:3004",
+  "http://localhost:3006/",
+    "http://localhost:3007/"]
+ 
 var maxErrors = 3;    
+
 
 var engine = loadbalance.roundRobin(servers)
 
@@ -23,8 +29,9 @@ app.use(express.json())
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(cors())
-app.use(morgan('combined', {stream: accessLogStream}))
-app.use(require('express-status-monitor')());
+app.use(morgan('combined', {stream: accessLogStream})) //logs
+app.use(require('express-status-monitor')());  //monitoreo
+
 
 app.get('/', (req, res) => {
     loadBalancer(res);
